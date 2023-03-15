@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +21,34 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import com.cicdlectures.menuserver.dto.DishDto;
 import com.cicdlectures.menuserver.dto.MenuDto;
+import com.cicdlectures.menuserver.model.Dish;
+import com.cicdlectures.menuserver.model.Menu;
+import com.cicdlectures.menuserver.repository.MenuRepository;
 
 // Lance l'application sur un port aléatoire.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 // Indique de relancer l'application à chaque test.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+
+
 public class MenuControllerIT {
 
+    // Injecte automatiquement l'instance du menu repository
+    @Autowired
+    private MenuRepository menuRepository;
   
+    private final List<Menu> existingMenus = Arrays.asList(
+        new Menu(null, "Christmas menu", new HashSet<>(Arrays.asList(new Dish(null, "Turkey", null), new Dish(null, "Pecan Pie", null)))),
+        new Menu(null, "New year's eve menu", new HashSet<>(Arrays.asList(new Dish(null, "Potatos", null), new Dish(null, "Tiramisu", null)))));
+  
+  
+    @BeforeEach
+    public void initDataset() {
+      for (Menu menu : existingMenus) {
+        menuRepository.save(menu);
+      }
+    }
+   
 @LocalServerPort
   private int port;
 
